@@ -1,0 +1,24 @@
+#cloud-config
+disable_root: true
+timezone: Europe/Moscow
+repo_update: true
+repo_upgrade: true
+apt:
+  preserve_sources_list: true
+
+packages:
+  - nginx
+
+runcmd:
+  - [ systemctl, nginx-reload ]
+  - [ systemctl, enable, nginx.service ]
+  - [ systemctl, start, --no-block, nginx.service ]
+  - [ sh, -c, "echo $(hostname | cut -d '.' -f 1 ) > /var/www/html/index.html" ]
+
+users:
+  - name: user
+    groups: sudo
+    shell: /bin/bash
+    sudo: ["ALL=(ALL) NOPASSWD:ALL"]
+    ssh_authorized_keys:
+      - ssh-ed25519 AAAAC3NzaC1lZDI1NTE5AAAAIIZ6dFBq/VmnLJ1Dsy8Oq37hKVbfxM3t10+gfF46ZUNG amd48@fedora
